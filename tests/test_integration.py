@@ -101,3 +101,8 @@ def test_when_place_order_then_shipping_in_queue(dynamo_resource):
 
     body = messages[0]["Body"]
     assert shipping_id == body
+
+
+def test_create_order(order):
+    assert order.order_id is not None
+    assert len(order.cart.products) > 0
