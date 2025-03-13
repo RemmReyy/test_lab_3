@@ -130,3 +130,12 @@ def test_place_order_past_due_date(order):
     past_due_date = datetime.now(timezone.utc) - timedelta(days=1)
     with pytest.raises(ValueError, match="Shipping due datetime must be greater than datetime now"):
         order.place_order("Нова Пошта", past_due_date)
+
+
+def test_check_shipping_status(order, shipping_service):
+    shipping_type = "Укр Пошта"
+    due_date = datetime.now(timezone.utc) + timedelta(days=1)
+    shipping_id = order.place_order(shipping_type, due_date=due_date)
+
+    status = shipping_service.check_status(shipping_id)
+    assert status == shipping_service.SHIPPING_IN_PROGRESS
