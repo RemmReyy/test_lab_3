@@ -119,3 +119,8 @@ def test_place_order_success(order):
     shipping_id = order.place_order(shipping_type, due_date=due_date)
 
     assert shipping_id is not None
+
+
+def test_place_order_invalid_shipping_type(order):
+    with pytest.raises(ValueError, match="Shipping type is not available"):
+        order.place_order("Fake Express", datetime.now(timezone.utc) + timedelta(days=1))
