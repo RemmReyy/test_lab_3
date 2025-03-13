@@ -165,3 +165,12 @@ def test_fail_shipping(order, shipping_service):
     response = shipping_service.fail_shipping(shipping_id)
 
     assert response["HTTPStatusCode"] == 200
+
+
+def test_product_quantity_after_order(order):
+    product = list(order.cart.products.keys())[0]
+    initial_quantity = product.available_amount
+
+    order.place_order("Нова Пошта", datetime.now(timezone.utc) + timedelta(days=1))
+
+    assert product.available_amount < initial_quantity
