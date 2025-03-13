@@ -106,3 +106,8 @@ def test_when_place_order_then_shipping_in_queue(dynamo_resource):
 def test_create_order(order):
     assert order.order_id is not None
     assert len(order.cart.products) > 0
+
+
+def test_list_available_shipping_types(shipping_service):
+    expected_types = ["Нова Пошта", "Укр Пошта", "Meest Express", "Самовивіз"]
+    assert shipping_service.list_available_shipping_type() == expected_types
