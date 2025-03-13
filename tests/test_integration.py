@@ -174,3 +174,19 @@ def test_product_quantity_after_order(order):
     order.place_order("Нова Пошта", datetime.now(timezone.utc) + timedelta(days=1))
 
     assert product.available_amount < initial_quantity
+
+
+def test_shipping_message_sent(mocker, shopping_cart):
+    mock_publisher = mocker.Mock()
+    mock_publisher.send_new_shipping.return_value = "mock_message_id"
+
+    shipping_service = ShippingService(ShippingRepository(), mock_publisher)
+
+    order = Order(cart=shopping_cart, shipping_service=shipping_service, order_id=str(uuid.uuid4()))
+
+    shipping_type = "Нова Пошта"
+    due_date = datetime.now(timezone.utc) + timedelta(days=1)
+
+    shipping_id = order.place_order(shipping_type, due_date=due_date)
+
+    mock_publisher.send_new_shipping.assert_called_once_with(shipping_id)
