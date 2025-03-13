@@ -124,3 +124,9 @@ def test_place_order_success(order):
 def test_place_order_invalid_shipping_type(order):
     with pytest.raises(ValueError, match="Shipping type is not available"):
         order.place_order("Fake Express", datetime.now(timezone.utc) + timedelta(days=1))
+
+
+def test_place_order_past_due_date(order):
+    past_due_date = datetime.now(timezone.utc) - timedelta(days=1)
+    with pytest.raises(ValueError, match="Shipping due datetime must be greater than datetime now"):
+        order.place_order("Нова Пошта", past_due_date)
