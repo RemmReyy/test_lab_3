@@ -148,3 +148,20 @@ def test_complete_shipping(order, shipping_service):
 
     response = shipping_service.complete_shipping(shipping_id)
     assert response["HTTPStatusCode"] == 200
+
+
+def test_fail_shipping(order, shipping_service):
+    shipping_type = "Самовивіз"
+    future_due_date = datetime.now(timezone.utc) + timedelta(days=1)
+    shipping_id = order.place_order(shipping_type, due_date=future_due_date)
+
+    past_due_date = datetime.now(timezone.utc) - timedelta(days=1)
+    shipping_service.repository.table.update_item(
+        Key={"shipping_id": shipping_id},
+        UpdateExpression="SET due_date = :new_due_date",
+        ExpressionAttributeValues={":new_due_date": past_due_date.isoformat()}
+    )
+
+    response = shipping_service.fail_shipping(shipping_id)
+
+    assert response["HTTPStatusCode"] == 200
