@@ -1,4 +1,3 @@
-
 import boto3
 
 from .config import AWS_ENDPOINT_URL, AWS_REGION, SHIPPING_QUEUE

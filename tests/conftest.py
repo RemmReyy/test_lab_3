@@ -1,8 +1,16 @@
 import pytest
 import boto3
+import uuid
+
+from app.eshop import ShoppingCart, Product, Order
+from services import ShippingService
 from services.config import *
 from services.db import get_dynamodb_resource
 from dotenv import load_dotenv
+
+from services.publisher import ShippingPublisher
+from services.repository import ShippingRepository
+
 
 @pytest.fixture(scope="session", autouse=True)
 def load_env():
@@ -40,3 +48,21 @@ def setup_localstack_resources():
 @pytest.fixture
 def dynamo_resource():
     return get_dynamodb_resource()
+
+
+@pytest.fixture
+def shipping_service():
+    return ShippingService(ShippingRepository(), ShippingPublisher())
+
+
+@pytest.fixture
+def shopping_cart():
+    cart = ShoppingCart()
+    cart.add_product(Product(name="Laptop", price=1000.0, available_amount=5), amount=1)
+    cart.add_product(Product(name="Phone", price=500.0, available_amount=10), amount=2)
+    return cart
+
+
+@pytest.fixture
+def order(shopping_cart, shipping_service):
+    return Order(cart=shopping_cart, shipping_service=shipping_service, order_id=str(uuid.uuid4()))
