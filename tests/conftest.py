@@ -2,6 +2,11 @@ import pytest
 import boto3
 from services.config import *
 from services.db import get_dynamodb_resource
+from dotenv import load_dotenv
+
+@pytest.fixture(scope="session", autouse=True)
+def load_env():
+    load_dotenv()
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_localstack_resources():
