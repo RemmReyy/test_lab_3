@@ -139,3 +139,12 @@ def test_check_shipping_status(order, shipping_service):
 
     status = shipping_service.check_status(shipping_id)
     assert status == shipping_service.SHIPPING_IN_PROGRESS
+
+
+def test_complete_shipping(order, shipping_service):
+    shipping_type = "Meest Express"
+    due_date = datetime.now(timezone.utc) + timedelta(days=1)
+    shipping_id = order.place_order(shipping_type, due_date=due_date)
+
+    response = shipping_service.complete_shipping(shipping_id)
+    assert response["HTTPStatusCode"] == 200
