@@ -111,3 +111,11 @@ def test_create_order(order):
 def test_list_available_shipping_types(shipping_service):
     expected_types = ["Нова Пошта", "Укр Пошта", "Meest Express", "Самовивіз"]
     assert shipping_service.list_available_shipping_type() == expected_types
+
+
+def test_place_order_success(order):
+    shipping_type = "Нова Пошта"
+    due_date = datetime.now(timezone.utc) + timedelta(days=1)
+    shipping_id = order.place_order(shipping_type, due_date=due_date)
+
+    assert shipping_id is not None
